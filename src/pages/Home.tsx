@@ -1,10 +1,14 @@
-import React from 'react'
-import SideBar from '../components/Sidebar/SideBar'
+import React from "react";
+import Chat from "../components/Chat/Chat";
+import SideBar from "../components/Sidebar/SideBar";
 
 function Home() {
   return (
-    <SideBar/>
-  )
+    <div className="grid grid-cols-3">
+      <SideBar />
+      <Chat />
+    </div>
+  );
 }
 
-export default Home
+export default Home;
