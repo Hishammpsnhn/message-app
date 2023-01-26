@@ -5,7 +5,7 @@ import Messages from './Messages'
 
 function Chat() {
   return (
-    <div className='col-span-2 relative'>
+    <div className=' relative hidden xs:block xs:w-[70%]'>
       <ChatHeader/>
       <Messages/>
       <div className='p-3 absolute w-full bottom-0 bg-sky-900'>

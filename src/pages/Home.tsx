@@ -4,7 +4,7 @@ import SideBar from "../components/Sidebar/SideBar";
 
 function Home() {
   return (
-    <div className="grid grid-cols-3">
+    <div className="w-full xs:flex ">
       <SideBar />
       <Chat />
     </div>
