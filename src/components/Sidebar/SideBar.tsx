@@ -1,8 +1,8 @@
-import React from "react";
+import React, { FC } from "react";
 import profile from "../assests/OIP.jpg";
 import User from "./User";
 import Users from "./Users";
-function SideBar() {
+const SideBar:React.FC=()=> {
   return (
     <div className="xs:w-[30%]  bg-sky-800  h-[100vh]">
       <div className="bg-sky-900 flex xs:flex-col  text-white font-mono p-3 md:flex-row items-center justify-between">
