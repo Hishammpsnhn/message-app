@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import add from "../assests/addAvatar.png";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
@@ -15,10 +19,10 @@ function Auth() {
   type User = typeof InitialData;
   const [image, setImage] = useState<any>();
   const [data, setData] = useState<User>(InitialData);
-  const [singUp, setSignUp] = useState<boolean>(true);
+  const [singUp, setSignUp] = useState<boolean>(false);
   const [ConfirmPassword, setConfirmPassword] = useState<String>();
   const [errorMessage, setErrorMessage] = useState<boolean>(false);
-  
+
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,26 +38,33 @@ function Auth() {
           const storageRef = ref(storage, `${data.userName}`);
           await uploadBytesResumable(storageRef, image).then(() => {
             getDownloadURL(storageRef).then(async (downloadURL) => {
-              await updateProfile(res.user, {
+              updateProfile(res.user, {
                 displayName: data.userName,
                 photoURL: downloadURL,
+              }).then(async () => {
+                const userRef = collection(db, "users");
+                await setDoc(doc(db, "users", res.user.uid), {
+                  uid: res.user.uid,
+                  displayName: data.userName,
+                  email: data.email,
+                  imageURL: downloadURL,
+                });
+                await setDoc(doc(db, "userchats", res.user.uid), {});
+                navigate("/");
               });
-              const userRef = collection(db, "users");
-              await setDoc(doc(db, "users", res.user.uid), {
-                uid: res.user.uid,
-                displayName: data.userName,
-                email: data.email,
-                imageURL: downloadURL,
-              });
-              await setDoc(doc(db, "userchats", res.user.uid), {});
-              navigate('/')
             });
           });
         } catch (error) {
           setErrorMessage(true);
         }
       } else {
-        console.log("password not match with confirm password");
+        alert("password not match with confirm password");
+      }
+    } else {
+      try {
+        await signInWithEmailAndPassword(auth, data.email, data.password);
+      } catch (error) {
+        setErrorMessage(true);
       }
     }
   };
