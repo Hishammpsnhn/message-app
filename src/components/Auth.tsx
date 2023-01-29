@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
   const InitialData = {
@@ -17,7 +18,8 @@ function Auth() {
   const [singUp, setSignUp] = useState<boolean>(true);
   const [ConfirmPassword, setConfirmPassword] = useState<String>();
   const [errorMessage, setErrorMessage] = useState<boolean>(false);
-
+  
+  const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(false);
@@ -44,6 +46,7 @@ function Auth() {
                 imageURL: downloadURL,
               });
               await setDoc(doc(db, "userchats", res.user.uid), {});
+              navigate('/')
             });
           });
         } catch (error) {
