@@ -31,6 +31,7 @@ function InputSection() {
             date: Timestamp.now(),
           }),
         });
+        setText("")
       }
     } catch (error) {}
   };
