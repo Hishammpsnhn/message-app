@@ -1,9 +1,12 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
+import { SelectChatContext } from "../../context/SelectedChatContext";
 import ChatHeader from "./ChatHeader";
 import InputSection from "./InputSection";
 import Messages from "./Messages";
 
 const Chat: React.FC = () => {
+  const { selectedChat} = useContext(SelectChatContext);
+  if(!selectedChat) return <div>select a user for Chat</div>
   return (
     <div className=" relative hidden xs:block xs:w-[70%]">
       <ChatHeader />
