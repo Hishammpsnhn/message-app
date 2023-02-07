@@ -13,10 +13,9 @@ function User({user}:Props) {
           className="rounded-full w-10 shadow-lg mx-4 my-2"
           alt="Avatar"
         />
-        {/* <div>
+        <div>
           <p className="font-medium text-base capitalize">{user.displayName}</p>
-          <p>hai</p>
-        </div> */}
+        </div>
       </div>
   );
 }

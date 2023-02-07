@@ -21,18 +21,21 @@ function Messages() {
     };
   }, [combinedId]);
   return (
-    <div className="text-white font-thin flex flex-col">
-      {messages.map((message: any,i:number) =>
+    <div className="text-white font-thin flex flex-col h-[79vh] overflow-y-scroll">
+      {messages.map((message: any, i: number) =>
         message.senderId === currentUser.uid ? (
           <div key={i} className="w-full px-2">
             <div className="bg-sky-900   float-right  px-2 py-1 rounded-xl my-1">
+              {message.img && <img  className=" h-[30vh]" src={message?.img} alt="image" />}
               {message.text}
             </div>
           </div>
         ) : (
           <div key={i} className="w-full px-2 ">
             <div className="bg-sky-900   float-left px-2 py-1 rounded-xl my-1">
-            {message.text}
+              {message.img && <img className=" h-[30vh]" src={message?.img} alt="image" />}
+              {message.text}
+
             </div>
           </div>
         )

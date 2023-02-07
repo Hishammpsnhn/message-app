@@ -8,7 +8,7 @@ const SideBar:React.FC=()=> {
   
 
   return (
-    <div className="xs:w-[30%]  bg-sky-800  h-[100vh]">
+    <div className="]  bg-sky-800  h-[100vh]">
       <div className="bg-sky-900 flex xs:flex-col  text-white font-mono p-3 md:flex-row items-center justify-between">
         <h2 className=" font-semibold font-sans text-3xl">Chat App</h2>
         <div className="flex justify-end xs:justify-between  items-center">

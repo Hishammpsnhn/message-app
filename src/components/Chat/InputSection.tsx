@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { BiSend } from "react-icons/bi";
 import { IconContext } from "react-icons/lib";
 import { GrAttachment } from "react-icons/gr";
@@ -11,36 +11,86 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { v4 as uuid } from "uuid";
+
 function InputSection() {
   const { currentUser } = useContext(AuthContext);
   const { selectedChat } = useContext(SelectChatContext);
   const [text, setText] = useState<string>("");
+  const [image, setImage] = useState<any>();
+  const [showImage, setShowImage] = useState<any>();
+
+  const inputRef = useRef<any>(null);
+
+  const handleClick = () => {
+    inputRef.current.click();
+  };
   const handleSend = async () => {
     const combinedId =
       currentUser.uid > selectedChat.uid
         ? currentUser.uid + selectedChat.uid
         : selectedChat.uid + currentUser.uid;
-    try {
-      const res = await getDoc(doc(db, "chats", combinedId));
-      if (res.exists()) {
-        await updateDoc(doc(db, "chats", combinedId), {
-          messages: arrayUnion({
-            text,
-            senderId: currentUser.uid,
-            date: Timestamp.now(),
-          }),
+    if (image) {
+      const storageRef = ref(storage, uuid());
+      await uploadBytesResumable(storageRef, image).then(() => {
+        getDownloadURL(storageRef).then(async (downloadURL) => {
+          await updateDoc(doc(db, "chats", combinedId), {
+            messages: arrayUnion({
+              text,
+              senderId: currentUser.uid,
+              date: Timestamp.now(),
+              img: downloadURL,
+            }),
+          });
         });
-        setText("")
+      });
+    } else {
+      if (text.length >= 1) {
+        try {
+          const res = await getDoc(doc(db, "chats", combinedId));
+          if (res.exists()) {
+            await updateDoc(doc(db, "chats", combinedId), {
+              messages: arrayUnion({
+                text,
+                senderId: currentUser.uid,
+                date: Timestamp.now(),
+              }),
+            });
+            setText("");
+          }
+        } catch (error) {
+          console.error(error);
+        }
       }
-    } catch (error) {}
+    }
+    setImage(null);
+    setText("");
+  };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      let file = e.target.files[0];
+      setImage(file);
+      setShowImage(URL.createObjectURL(file));
+    }
   };
   return (
     <div className="flex justify-between">
       <div className="cursor-pointer">
-        <IconContext.Provider value={{ size: "30px" }}>
-          <GrAttachment />
-        </IconContext.Provider>
+        <input
+          type="file"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+          ref={inputRef}
+        />
+        {!showImage ? (
+          <IconContext.Provider value={{ size: "30px" }}>
+            <GrAttachment onClick={handleClick} />
+          </IconContext.Provider>
+        ) : (
+          <img onClick={handleClick} className="w-[30px] h-[30px]" src={showImage} alt="" />
+        )}
       </div>
 
       <input
